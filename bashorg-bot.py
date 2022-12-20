@@ -7,7 +7,7 @@
 """
 
 import telebot
-#from telebot import types
+from telebot import types
 import requests
 from bs4 import BeautifulSoup
 
@@ -34,7 +34,7 @@ def send_quote(message):
     dirty_date = soup.find('div', class_='vote').text.strip().split()  # сырая строка с датой
 
     if len(dirty_date) == 8:
-        if_date = dirty_date[3:-2]  # иногда попадается слово 'цитата', условия для корректного отобраэжения даты
+        if_date = dirty_date[3:-2]  # иногда попадается слово 'цитата', условие для корректного отобраэжения даты
     else: if_date = dirty_date[4:-2]
 
     date = ' '.join(if_date)  # готовая строка с датой
