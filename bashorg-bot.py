@@ -42,7 +42,7 @@ def send_quote(message):
     date = ' '.join(if_date)  # готовая строка с датой
     quote = soup.find('div', class_='q').find('div', class_=None).text  # получаем чистую цитату из безымянного div
     answer = date + "\n" + quote
-    bot.reply_to(message, answer)
+    bot.send_message(message.chat.id, answer)
     # print('Ответ:\n' + answer)  #######
 
 
