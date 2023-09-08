@@ -18,7 +18,7 @@ url = "http://bashorg.org/casual"
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     """Приветствие"""
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup = types.ReplyKeyboardMarkup()
     btn1 = types.KeyboardButton("/random")
     btn2 = types.KeyboardButton("Кто ты?")
     markup.add(btn1, btn2)
