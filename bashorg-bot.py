@@ -18,7 +18,7 @@ url = "http://bashorg.org/casual"
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     """Приветствие"""
-    markup = types.ReplyKeyboardMarkup()
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("/random")
     btn2 = types.KeyboardButton("Кто ты?")
     markup.add(btn1, btn2)
@@ -58,4 +58,5 @@ def dialog(message):
 над улучшением и расширением моих способостей 😎")
     else: bot.send_message(message.chat.id, text="Ничего не понял...")
 
+print("Started...")
 bot.infinity_polling()
