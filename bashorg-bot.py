@@ -22,7 +22,7 @@ def send_welcome(message):
     btn1 = types.KeyboardButton("/random")
     btn2 = types.KeyboardButton("Кто ты?")
     markup.add(btn1, btn2)
-    bot.send_message(message, 'Привет {0.first_name}! Нажми кнопку или напиши команду /random \
+    bot.send_message(message.chat.id, 'Привет {0.first_name}! Нажми кнопку или напиши команду /random \
             чтобы получить рандомную цитату'.format(message.from_user), reply_markup=markup)
 
 @bot.message_handler(commands=['random'])
