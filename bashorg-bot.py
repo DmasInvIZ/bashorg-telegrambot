@@ -22,7 +22,7 @@ def send_welcome(message):
     btn1 = types.KeyboardButton("/random")
     btn2 = types.KeyboardButton("Кто ты?")
     markup.add(btn1, btn2)
-    bot.send_message(message.chat.id, 'Привет {0.first_name}! Нажми кнопку или напиши команду /random \
+    bot.reply_to(message, 'Привет {0.first_name}! Нажми кнопку или напиши команду /random \
             чтобы получить рандомную цитату'.format(message.from_user), reply_markup=markup)
 
 @bot.message_handler(commands=['random'])
@@ -34,11 +34,11 @@ def send_quote(message):
     dirty_date = soup.find('div', class_='vote').text.strip().split()  # сырая строка с датой
 
     if len(dirty_date) == 8:
-        if_date = dirty_date[3:-2]  # иногда попадается слово 'цитата', условие для корректного отобраэжения даты
+        if_date = dirty_date[3:-2]  # иногда попадается слово 'цитата', условие для корректного отображения даты
     else: if_date = dirty_date[4:-2]
 
     date = ' '.join(if_date)  # готовая строка с датой
-    quote = soup.find('div', class_='q').find('div', class_=None).text  # получаем чистую цитату из безямянного div
+    quote = soup.find('div', class_='q').find('div', class_=None).text  # получаем чистую цитату из безымянного div
     answer = date +'\n'+ quote
     
 ##    response = requests.get(url)  # получаем страницу от сервера
@@ -47,13 +47,13 @@ def send_quote(message):
 ##    quote_list = quote.text.split(' ')[3:]  # разбиваем на список и отрезаем лишнее
 ##    result = ' '.join(quote_list).rstrip()  # соединяем воедино и обрезаем лишние пробелы в конце
     
-    bot.send_message(message, answer) 
+    bot.reply_to(message, answer) 
     print('Ответ:\n' + answer) #######
 
 @bot.message_handler(content_types=['text'])
 def dialog(message):
     if(message.text == "Кто ты?"):
-        bot.send_message(message.chat.id, text="Рад что ты спросил... Я БОТ! Я вывожу случайную \
+        bot.reply_to(message, text="Рад что ты спросил... Я БОТ! Я вывожу случайную \
 цитату с сайта Bashorg.org. Пока я умею только это, но мой создатель работает \
 над улучшением и расширением моих способостей 😎")
     else: bot.send_message(message.chat.id, text="Ничего не понял...")
