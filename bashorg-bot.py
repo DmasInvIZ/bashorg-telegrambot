@@ -22,7 +22,7 @@ def send_welcome(message):
     btn1 = types.KeyboardButton("/random")
     btn2 = types.KeyboardButton("Кто ты?")
     markup.add(btn1, btn2)
-    bot.reply_to(message, 'Привет {0.first_name}! Нажми кнопку или напиши команду /random \
+    bot.send_message(message, 'Привет {0.first_name}! Нажми кнопку или напиши команду /random \
             чтобы получить рандомную цитату'.format(message.from_user), reply_markup=markup)
 
 @bot.message_handler(commands=['random'])
@@ -47,7 +47,7 @@ def send_quote(message):
 ##    quote_list = quote.text.split(' ')[3:]  # разбиваем на список и отрезаем лишнее
 ##    result = ' '.join(quote_list).rstrip()  # соединяем воедино и обрезаем лишние пробелы в конце
     
-    bot.reply_to(message, answer) 
+    bot.send_message(message, answer) 
     print('Ответ:\n' + answer) #######
 
 @bot.message_handler(content_types=['text'])
