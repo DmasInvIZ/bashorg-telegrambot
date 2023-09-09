@@ -10,8 +10,9 @@ import telebot
 from telebot import types
 import requests
 from bs4 import BeautifulSoup
+from token_file import token
 
-bot = telebot.TeleBot('5478114841:AAFTQV9LPqHoVcMq7B6cTKa6WPCsQwuq00A')
+bot = telebot.TeleBot(token)
 url = "http://bashorg.org/casual"
 
 
