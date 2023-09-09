@@ -30,23 +30,24 @@ def send_welcome(message):
 def send_quote(message):
     """Отправка рандомной цитаты"""
     print('Запрос от {0.first_name}'.format(message.from_user))  #########
-    response = requests.get(url)  # получаем страницу от сервера
-    soup = BeautifulSoup(response.text, 'lxml')  # создаем объект html страницы
-    dirty_date = soup.find('div', class_='vote').text.strip().split()  # сырая строка с датой
+    response = requests.get(url)                                            # получаем страницу от сервера
+    soup = BeautifulSoup(response.text, 'lxml')                             # создаем объект html страницы
+    dirty_date = soup.find('div', class_='vote').text.strip().split()       # сырая строка с датой
 
     if len(dirty_date) == 8:
-        if_date = dirty_date[3:-2]  # иногда попадается слово 'цитата', условие для корректного отображения даты
+        if_date = dirty_date[3:-2]          # иногда попадается слово 'цитата', условие для корректного отображения даты
     else:
         if_date = dirty_date[4:-2]
 
-    date = ' '.join(if_date)  # готовая строка с датой
-    quote = soup.find('div', class_='q').find('div', class_=None).text  # получаем чистую цитату из безымянного div
+    date = ' '.join(if_date)                                                 # готовая строка с датой
+    quote_old = str(soup.find('div', class_='q').find('div', class_=None))   # получаем чистую цитату из безымянного div
+    quote = quote_old.replace("<br/>", "\n").replace("<div>", "").replace("</div>", "")  # получаем цитату без склеек и тегов
     answer = date + "\n" + quote
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("/random")
     markup.add(btn1)
     bot.send_message(message.chat.id, answer, reply_markup=markup)
-    # print('Ответ:\n' + answer)  #######
+    # print(quote)  #######
 
 
 @bot.message_handler(content_types=['text'])
@@ -54,7 +55,7 @@ def dialog(message):
     if message.text == "Кто ты?":
         bot.reply_to(message, text="Рад что ты спросил... Я БОТ! Я вывожу случайную \
         цитату с сайта Bashorg.org. Пока я умею только это, но мой создатель работает \
-        над улучшением и расширением моих способостей 😎")
+        над улучшением и расширением моих способностей 😎")
     else:
         bot.send_message(message.chat.id, text="Ничего не понял...")
 
