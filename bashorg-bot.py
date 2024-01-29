@@ -61,5 +61,5 @@ def dialog(message):
         bot.send_message(message.chat.id, text="Ничего не понял...")
 
 
-print("Started...")
+print("Работает")
 bot.infinity_polling()
