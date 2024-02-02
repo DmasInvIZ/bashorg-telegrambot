@@ -5,7 +5,7 @@
     beautifulsoup4
     lxml
 """
-
+from aiogram.utils.markdown import hlink
 import telebot
 from telebot import types
 import requests
@@ -34,20 +34,24 @@ def send_quote(message):
     print('Запрос от {0.first_name}'.format(message.from_user))  #########
     response = requests.get(url)                                            # получаем страницу от сервера
     soup = BeautifulSoup(response.text, 'lxml')                             # создаем объект html страницы
-    date = soup.find('div', class_='quote__header_date').text.strip()[0:10]  # получаем дату
 
+    date = soup.find('div', class_='quote__header_date').text.strip()[0:10]  # получаем дату
+    quote_num = soup.find('a', class_='quote__header_permalink').text  # получаем номер цитаты
+    print(quote_num)
+    quote_num_link = soup.find('a', class_='quote__header_permalink').get('href')
+    print(quote_num_link)
     dirty_quote = str(soup.find('div', class_='quote__frame').find('div', class_='quote__body'))  # строка с цитатой со спец символами и со склееными строками
     quote = dirty_quote.replace("<br/>", "\n").replace('<div class="quote__body">', "").replace("</div>", "")\
         .replace('&lt;', '<').replace('&gt;', '>').strip()  # готовая строка с цитатой
 
-    # quote_old = str(soup.find('div', class_='q').find('div', class_=None))   # получаем чистую цитату из безымянного div
-    # quote = quote_old.replace("<br/>", "\n").replace("<div>", "").replace("</div>", "")  # получаем цитату без склеек и тегов
-    answer = date + "\n" + quote
+    #link = hlink(f"{quote_num}", "https://xn--80abh7bk0c.xn--p1ai{quote_num_link}")
+    #print(link)
+    answer = f'{quote_num} - {date}' + "\n" + quote
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("/random")
     markup.add(btn1)
-    bot.send_message(message.chat.id, answer, reply_markup=markup)
-    # print(quote)  #######
+    bot.send_message(message.chat.id, answer, reply_markup=markup, parse_mode="HTML")
+
 
 @bot.message_handler(content_types=['text'])
 def dialog(message):
