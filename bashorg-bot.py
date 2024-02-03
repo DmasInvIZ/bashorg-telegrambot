@@ -14,7 +14,7 @@ from token_file import token
 import logging
 
 logger = logging.getLogger('logger')
-logger.setLevel(logging.INFO)
+logging.basicConfig(level=logging.INFO, filename="file.log", filemode="w")
 
 bot = telebot.TeleBot(token)
 url = "https://xn--80abh7bk0c.xn--p1ai/random"
@@ -47,13 +47,14 @@ def send_quote(message):
             .replace('&lt;', '-').replace('&gt;', '-').strip()                       # готовая строка с цитатой
         link = hlink(quote_num, f'https://xn--80abh7bk0c.xn--p1ai{quote_num_link}')  # формируем ссылку для телеграмм
 
-        answer = str(f'{link} - Добавлено {date}\n{quote}')                                    # формируем ответ для пользователя
+        answer = str(f'{link} - Добавлено {date}\n{quote}')                          # формируем ответ для пользователя
         # print(answer)
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton("/random")
         markup.add(btn1)
         bot.send_message(message.chat.id, answer, reply_markup=markup, parse_mode='HTML')
         logger.info('Запрос от {0.first_name}'.format(message.from_user))
+        logger.info('Ответ: \n' + answer + "\n".format(message.from_user))
 
     except Exception as error:
         print(error)
