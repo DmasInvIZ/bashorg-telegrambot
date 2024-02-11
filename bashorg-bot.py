@@ -35,7 +35,7 @@ def send_welcome(message):
 def send_quote(message):
     """Отправка рандомной цитаты"""
     try:
-        print('Запрос от {0.first_name}'.format(message.from_user))                  #########
+        print('Запрос от {0.first_name}'.format(message.from_user))
         response = requests.get(url)                                                 # получаем страницу от сервера
         soup = BeautifulSoup(response.text, 'lxml')                                  # создаем объект html страницы
         date = soup.find('div', class_='quote__header_date').text.strip()[0:10]      # получаем дату
