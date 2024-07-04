@@ -20,6 +20,37 @@ bot = telebot.TeleBot(token)
 url = "https://xn--80abh7bk0c.xn--p1ai/random"
 
 
+def find_articles():
+    print("find articles")
+    response = requests.get(url)                                                                        # получаем страницу от сервера
+    soup = BeautifulSoup(response.text, 'lxml')                                                             # создаем объект html страницы
+    quotes = soup.find('section', class_='quotes')
+    articles = quotes.find_all('article', class_='quote')
+    quote_list = list()
+    for el in articles:
+        quote = el.find('div', class_='quote__body').strip
+
+        quote_list.append(el.text)
+    print(quote_list)                                                       # получили сырую строку над которой работать и работать
+
+
+
+
+
+
+    date = soup.find('div', class_='quote__header_date').text.strip()[0:10]                                 # получаем дату
+    quote_num = soup.find('a', class_='quote__header_permalink').text                        # получаем номер цитаты
+    quote_num_link = soup.find('a', class_='quote__header_permalink').get('href')                                   # получаем ссылку на цитату
+    dirty_quote = str(soup.find('div', class_='quote__frame').find('div', class_='quote__body'))             # строка \
+                                                                                                    # c цитатой со спецсимволами и со склеенными строками
+    quote = dirty_quote.replace("<br/>", "\n").replace('<div class="quote__body">', "").replace("</div>", "") \
+        .replace('&lt;', '-').replace('&gt;', '-').strip()                                              # готовая строка с цитатой
+    link = hlink(quote_num, f'https://xn--80abh7bk0c.xn--p1ai{quote_num_link}')                     # формируем ссылку для телеграмм
+
+    answer = str(f'{link} - Добавлено {date}\n{quote}')                                              # формируем ответ для пользователя
+    return
+
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     """Приветствие"""
@@ -74,5 +105,8 @@ def dialog(message):
         bot.send_message(message.chat.id, text="Ничего не понял...")
 
 
-print("Started...")
-bot.infinity_polling()
+find_articles()
+
+
+# print("Started...")
+# bot.infinity_polling()
