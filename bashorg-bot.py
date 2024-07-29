@@ -20,37 +20,6 @@ bot = telebot.TeleBot(token)
 url = "https://xn--80abh7bk0c.xn--p1ai/random"
 
 
-def find_articles():
-    print("find articles")
-    response = requests.get(url)                                                                        # получаем страницу от сервера
-    soup = BeautifulSoup(response.text, 'lxml')                                                             # создаем объект html страницы
-    quotes = soup.find('section', class_='quotes')
-    articles = quotes.find_all('article', class_='quote')
-    quote_list = list()
-    for el in articles:
-        quote = el.find('div', class_='quote__body').strip
-
-        quote_list.append(el.text)
-    print(quote_list)                                                       # получили сырую строку над которой работать и работать
-
-
-
-
-
-
-    date = soup.find('div', class_='quote__header_date').text.strip()[0:10]                                 # получаем дату
-    quote_num = soup.find('a', class_='quote__header_permalink').text                        # получаем номер цитаты
-    quote_num_link = soup.find('a', class_='quote__header_permalink').get('href')                                   # получаем ссылку на цитату
-    dirty_quote = str(soup.find('div', class_='quote__frame').find('div', class_='quote__body'))             # строка \
-                                                                                                    # c цитатой со спецсимволами и со склеенными строками
-    quote = dirty_quote.replace("<br/>", "\n").replace('<div class="quote__body">', "").replace("</div>", "") \
-        .replace('&lt;', '-').replace('&gt;', '-').strip()                                              # готовая строка с цитатой
-    link = hlink(quote_num, f'https://xn--80abh7bk0c.xn--p1ai{quote_num_link}')                     # формируем ссылку для телеграмм
-
-    answer = str(f'{link} - Добавлено {date}\n{quote}')                                              # формируем ответ для пользователя
-    return
-
-
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     """Приветствие"""
@@ -67,25 +36,30 @@ def send_quote(message):
     """Отправка рандомной цитаты"""
     try:
         print('Запрос от {0.first_name}'.format(message.from_user))
-        response = requests.get(url)                                                 # получаем страницу от сервера
-        soup = BeautifulSoup(response.text, 'lxml')                                  # создаем объект html страницы
-        date = soup.find('div', class_='quote__header_date').text.strip()[0:10]      # получаем дату
-        quote_num = soup.find('a', class_='quote__header_permalink').text            # получаем номер цитаты
-        quote_num_link = soup.find('a', class_='quote__header_permalink').get('href')  # получаем ссылку на цитату
-        dirty_quote = str(soup.find('div', class_='quote__frame').find('div', class_='quote__body'))  # строка \
-                                                                 # c цитатой со спецсимволами и со склеенными строками
-        quote = dirty_quote.replace("<br/>", "\n").replace('<div class="quote__body">', "").replace("</div>", "")\
-            .replace('&lt;', '-').replace('&gt;', '-').strip()                       # готовая строка с цитатой
-        link = hlink(quote_num, f'https://xn--80abh7bk0c.xn--p1ai{quote_num_link}')  # формируем ссылку для телеграмм
+        
+        response = requests.get(url)                                                            # получаем страницу от сервера
+        soup = BeautifulSoup(response.text, 'lxml')                                             # создаем объект html страницы
+        articles = soup.find('section', class_='quotes')
+        article = articles.find('article', class_='quote')
+        quote_date = article.find('header', class_='quote__header').find('div', class_='quote__header_date').text.strip()[0:10]     # получаем дату
+        quote_number = article.find('header', class_='quote__header').find('a', class_='quote__header_permalink').text              # получаем номер цитаты
+        quote_link = article.find('header', class_='quote__header').find('a', class_='quote__header_permalink').get('href')         # получаем ссылку на цитату
+        quote_text = str(article.find('div', class_='quote__body'))\
+                   .replace('<br/>', '\n')\
+                   .replace('</div>', '')\
+                   .replace('<div class="quote__body">', '')\
+                   .replace('&lt;', ' ')\
+                   .replace('&gt;', ' -').strip()                                               # готовая строка с цитатой
+        link = hlink(quote_number, f'https://xn--80abh7bk0c.xn--p1ai{quote_link}')              # формируем ссылку для телеграмм
+        answer = str(f'{link} - Добавлено {quote_date}\n{quote_text}')                          # формируем ответ для пользователя
 
-        answer = str(f'{link} - Добавлено {date}\n{quote}')                          # формируем ответ для пользователя
-        # print(answer)
+        print(answer)
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton("/random")
         markup.add(btn1)
         bot.send_message(message.chat.id, answer, reply_markup=markup, parse_mode='HTML')
         logger.info('Запрос от {0.first_name}'.format(message.from_user))
-        logger.info('Ответ: \n' + answer + "\n".format(message.from_user))
+        #logger.info('Ответ: \n', answer, "\n".format(message.from_user))
 
     except Exception as error:
         print(error)
@@ -105,8 +79,5 @@ def dialog(message):
         bot.send_message(message.chat.id, text="Ничего не понял...")
 
 
-find_articles()
-
-
-# print("Started...")
-# bot.infinity_polling()
+print("Started...")
+bot.infinity_polling()
