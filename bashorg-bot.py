@@ -38,11 +38,12 @@ def timer_for_joke():
         timer.cancel()
     if "21:00:00" < datetime.datetime.now().strftime("%H:%M:%S") < "9:00:00":
         print("Сейчас не время")
-        next_joke_time = random.randint(120, 360)
+        next_joke_time = random.randint(60*60*3, 60*60*6)
+        print(f"Таймер сработает через {next_joke_time} секунд")
         timer = Timer(next_joke_time, timer_for_joke)
         timer.start()
     else:
-        next_joke_time = random.randint(90, 180)
+        next_joke_time = random.randint(60*60*1, 60*60*5)
         print(f"Следующая цитата через {next_joke_time} секунд")
         timer = Timer(next_joke_time, joking)  # изменить время на рандомное
         timer.start()  # настроить таймер чтобы не срабатывал ночью
@@ -50,7 +51,7 @@ def timer_for_joke():
 
 def joking():
     joke = get_quote()
-    bot.send_message(chat_id, f"Что-то тут тихо... " + "\n" + "\n" + joke, parse_mode='HTML')  #-1002438393620
+    bot.send_message(chat_id, f"Что-то тут тихо... " + "\n" + "\n" + joke, parse_mode='HTML')
 
 
 @bot.message_handler(commands=['start'])
@@ -58,9 +59,6 @@ def send_welcome(message):
     """Приветствие"""
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("/random")
-    # btn2 = types.KeyboardButton("Кто ты?")
-    # global chat_id
-    # chat_id = message.chat.id
     markup.add(btn1)
     bot.reply_to(message, 'Привет {0.first_name}! Нажми кнопку или напиши команду /random \
             чтобы получить рандомную цитату'.format(message.from_user), reply_markup=markup)
@@ -77,7 +75,6 @@ def send_quote(message):
         markup.add(btn1)
         bot.reply_to(message, quote, reply_markup=markup, parse_mode='HTML')
         logger.info('Запрос от {0.first_name}'.format(message.from_user))
-        # logger.info('Ответ: \n', answer, "\n".format(message.from_user))
 
     except Exception as error:
         print(error)
